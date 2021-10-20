@@ -7,7 +7,7 @@ output:
  title: 'calss 6 : R Functions'
  author: "Tianyun Hua PID:A91041691"
  date: "10/15/2021"
- output: html_document
+ output: github_document
 ---
 
 ## quick R Markdown intro
