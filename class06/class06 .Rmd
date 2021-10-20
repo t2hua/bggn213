@@ -1,0 +1,198 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+ ---
+ title: 'calss 6 : R Functions'
+ author: "Tianyun Hua PID:A91041691"
+ date: "10/15/2021"
+ output: html_document
+---
+
+## quick R Markdown intro
+**bold** or *italic*
+
+# This is a level 1 heading
+### This is a level 3 heading
+
+
+Here we will write a function to grade studetn homework.
+New code chunck: option + command + I (for R code)
+
+We will start with input example--student homework scores
+```{r}
+# example input vector
+student1 <- c(100, 100, 100, 100, 100, 100, 100, 90)
+student2 <- c(100, NA, 90, 90, 90, 90, 97, 80)
+student3 <- c(90, NA, NA, NA, NA, NA, NA, NA)
+```
+
+
+> Q1. Write a function grade() to determine an overall grade from a vector of student homework
+assignment scores dropping the lowest single score. If a student misses a homework (i.e. has an
+NA value) this can be used as a score to be potentially dropped. Your final function should be
+adquately explained with code comments and be able to work on an example class gradebook
+such as this one in CSV format: “https://tinyurl.com/gradeinput” [3pts]
+
+First, find the lowest score using **min()**, and the **which.min()** function to find the position of the smallest value
+
+```{r}
+student1
+which.min(student1)
+
+```
+
+```{r}
+student1[8]
+# to get everything but the minimum value
+student1[-which.min(student1)]
+```
+
+Then we can take the mean
+
+```{r}
+# this is my first solution
+mean(student1[-which.min(student1)])
+```
+
+Is this a good idea?
+```{r}
+student2
+# remove the NA value
+mean(student2, na.rm = TRUE)
+mean(student3, na.rm = TRUE)
+# not a good idea
+```
+
+This is a bad idea because this is unfair using the na.rm = TRUE argument.
+
+Let's change NA values to 0
+Use the 'is.na()' function
+
+```{r}
+student2
+is.na(student2)
+
+x <- student2
+x [is.na(x)] <- 0 
+x
+mean(x)
+```
+
+Combine working snippets to find the average for student3
+
+```{r}
+x3 <- student3
+x3[is.na(x3)] <- 0
+mean(x3[-which.min(x3)])
+```
+
+### now we can make our function
+
+### use the "code"-"exrtact function"
+```{r}
+
+grade <- function(x) {
+  x[is.na(x)] <- 0
+  mean(x[-which.min(x)])
+}
+```
+
+Now use the function to grade 3 students
+```{r}
+grade(student1)
+grade(student2)
+grade(student3)
+```
+
+Your final function should be
+adquately explained with **code comments** and be able to work on an example class gradebook
+such as this one in CSV format: “https://tinyurl.com/gradeinput” 
+Now **grade the whole class**
+
+Document the newly defined function with "code"-"Roxygen Skeleton"
+```{r}
+#' Calculate average scores for a vector of homework scores
+#' dropping lowest single score. missing value will
+#' be treated as zero score
+#' @param x numeric vector of hw scores
+#'
+#' @return average score
+#' @export
+#'
+#' @examples
+#'  student <- c(100, NA, 90, 80)
+#'  grade(student)
+#' 
+grade <- function(x) {
+  # map NA missing homework values to zero
+  # missing homework is 0 
+  x[is.na(x)] <- 0
+  # exclude lowest score hw
+  mean(x[-which.min(x)])
+}
+```
+
+```{r}
+url <-"https://tinyurl.com/gradeinput"
+gradebook<- read.csv(url, row.names = 1)
+gradebook
+```
+
+We are going to use the super useful **apply()**
+
+```{r}
+apply(gradebook, 1, grade)
+```
+
+> Q2 Using your grade() function and the supplied gradebook, Who is the top scoring student overall in the gradebook?
+
+```{r}
+results <- apply(gradebook, 1, grade)
+# first approach
+sort(results, decreasing = TRUE)
+# second approach
+which.max(results)
+```
+
+
+>Q3 From your analysis of the gradebook, **which homework** was **toughest** on students (i.e. obtained the lowest scores overall?
+
+Here we want to calculate a summary stat for each column of the gradebook. Which stat should we use?
+
+```{r}
+# Let's try average, by column (margin = 2)
+apply(gradebook, 2, mean)
+```
+
+ I can ignore the NA missing values
+```{r}
+hw.ave <- apply(gradebook, 2, mean, na.rm = TRUE)
+which.min(hw.ave)
+```
+
+```{r}
+hw.med <- apply(gradebook, 2, median, na.rm = TRUE)
+which.min(hw.med)
+```
+
+Difference when using mean and median, plot the data and see
+
+```{r}
+boxplot(gradebook)
+```
+
+>Q4. Optional Extension: From your analysis of the gradebook, which homework was most
+predictive of overall score (i.e. highest correlation with average grade score)?
+
+we will use **cor()** here
+
+```{r}
+gradebook[is.na(gradebook)] <- 0
+cor(results, gradebook$hw5)
+apply(gradebook, 2, cor, x = results)
+```
+
+Homework 5 is the most predicative of overall score
+
