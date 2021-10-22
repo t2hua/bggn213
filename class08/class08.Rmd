@@ -159,5 +159,13 @@ colnames(rna.data)
 
 ```{r}
 pca.rna <-prcomp(t(rna.data), scale = TRUE)
+summary(pca.rna)
+plot(pca.rna)
+```
+
+
+```{r}
+plot(pca.rna$x[, 1:2])
+text(pca.rna$x[, 1:2], labels = colnames(rna.data))
 ```
 
