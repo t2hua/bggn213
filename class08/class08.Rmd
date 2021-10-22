@@ -146,4 +146,18 @@ barplot(pca$rotation[,1], las = 2)
 
 
 ## One more PCA for today
+```{r}
+url2 <- "https://tinyurl.com/expression-CSV"
+rna.data <- read.csv(url2, row.names=1)
+head(rna.data)
+```
+
+```{r}
+ncol(rna.data)
+colnames(rna.data)
+```
+
+```{r}
+pca.rna <-prcomp(t(rna.data), scale = TRUE)
+```
 
