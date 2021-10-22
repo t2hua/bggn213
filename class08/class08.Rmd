@@ -1,0 +1,149 @@
+---
+title: "Machine Learning1"
+author: "Tianyun Hua (PID:A91041691)"
+date: "10/22/2021"
+output: html_document
+---
+
+# Clustering Methods
+
+Kmeans clustering in R is done with the 'kmeans()' function
+Here we make up some data to test and learn with
+
+```{r}
+tmp <- c(rnorm(30, 3), rnorm(30, -3))
+data <- cbind(x=tmp,y=rev(tmp))
+plot(data)
+
+```
+Run 'kmeans()' set k(centers) to 2 (i.e. the number of clusters we want) nstart 20. The thing with Kmeans is you have to tell it how many clusters you want.
+
+```{r}
+km <- kmeans(data, centers = 2, nstar = 20)
+km
+```
+
+>Q. How many points are in each cluster?
+
+```{r}
+km$size
+```
+
+>Q. What ‘component’ of your result object details cluster assignment/membership?
+ 
+```{r}
+km$cluster
+```
+ 
+ 
+>Q. What ‘component’ of your result object details cluster center?
+
+```{r}
+km$center
+```
+>Q.Plot x colored by the kmeans cluster assignment and add cluster centers as blue points
+
+```{r}
+plot(data, col = km$cluster)
+points(km$centers, col = "blue", pch = 15, cex = 2)
+```
+
+
+# Hierarchail Clustering
+
+We will use 'hclust()' function
+```{r}
+hc <- hclust(dist(data))
+hc
+```
+
+hclust has a plot method
+```{r}
+plot(hc)
+```
+To find our membership vector we need to cut the tree and for this we use the 'cutree()' function and tell it the height to cut at. 
+
+```{r}
+cutree(hc, h = 7)
+```
+
+We can also use'cutree()' and state the number of clusters we want
+
+```{r}
+grps <- cutree(hc, k = 2)
+plot(data, col = grps)
+```
+
+# Principal Componet Analysis (PCA)
+
+## PCA of UK food data
+
+```{r}
+url <- "https://tinyurl.com/UK-foods"
+x <- read.csv(url)
+```
+
+How many rows and cols?
+```{r}
+dim(x)
+```
+
+```{r}
+rownames(x) <- x[,1]
+x <- x[,1]
+x
+```
+
+```{r}
+url <- "https://tinyurl.com/UK-foods"
+x <- read.csv(url, row.names = 1)
+x
+```
+
+```{r}
+barplot(as.matrix(x), col = rainbow(17))
+```
+
+```{r}
+barplot(as.matrix(x), col = rainbow(17), beside = TRUE)
+```
+
+```{r}
+mycols <- rainbow(nrow(x))
+pairs(x, col = mycols, pch = 16)
+```
+
+# PCA to my rescue
+
+Here we will use the base R function for PCA, which is called 'prcomp()'. 
+This function wants the transpose of data. 
+```{r}
+
+pca <- prcomp(t(x))
+summary(pca)
+```
+
+```{r}
+plot(pca)
+```
+
+We want score plot (PCA). Basically of PC1 vs PC2
+```{r}
+attributes(pca)
+```
+
+```{r}
+plot(pca$x[,1:2])
+text(pca$x[,1:2], labels = colnames(x))
+```
+
+We also examine the PCA "loadings", which tell us how much the original variables contribute to each new PC
+
+```{r}
+pca$rotation
+barplot(pca$rotation[,1], las = 2)
+```
+
+
+## One more PCA for today
+
