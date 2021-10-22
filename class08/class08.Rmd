@@ -2,7 +2,9 @@
 title: "Machine Learning1"
 author: "Tianyun Hua (PID:A91041691)"
 date: "10/22/2021"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 # Clustering Methods
@@ -169,3 +171,4 @@ plot(pca.rna$x[, 1:2])
 text(pca.rna$x[, 1:2], labels = colnames(rna.data))
 ```
 
+Let's Knit to PDF and Git
