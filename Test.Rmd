@@ -24,7 +24,7 @@ summary(cars)
 ## Including Plots
 
 You can also embed plots, for example:
-how to make changes 
+how to make changes cannot
 
 ```{r pressure, echo=FALSE}
 plot(pressure)
